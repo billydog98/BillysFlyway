@@ -53,7 +53,7 @@ export default function Home(){
   return <div className="shell">
     <button className="burger" onClick={()=>setMenu(!menu)}>Menu</button>
     <nav className={"side"+(menu?" open":"")}>
-      <div className="brand"><b>Bills Ducks</b><small>Arizona waterfowl intelligence</small></div>
+      <div className="brand"><b>Billys Flyway</b><small>Arizona waterfowl intelligence</small></div>
       {MENU.map(([k,l])=><button key={k} className={view===k?"on":""} onClick={()=>{setView(k);setMenu(false)}}>{l}</button>)}
     </nav>
     <div className="content">
@@ -62,7 +62,6 @@ export default function Home(){
           <Image src={billy} alt="Billy" fill priority sizes="100vw" style={{objectFit:"cover"}}/>
           <div className="shade"/>
           <div className="caption">
-            <h1>Bills Ducks</h1>
             <h2>Central Arizona duck hunting outlook</h2>
             {t?<>
               <div className="big" style={{color:col(t.score)}}>{t.score}<small>/10 today</small></div>
