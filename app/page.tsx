@@ -6,7 +6,7 @@ const col=(s:number)=>s>=9?"#4fd18b":s>=7?"#8fcf5a":s>=5?"#d9b84a":s>=3?"#d98a4a
 const band=(s:number)=>s>=9?"Exceptional":s>=7?"Good":s>=5?"Average":s>=3?"Poor":"Very poor";
 const gcol=(g:number)=>g>=30?"#c4524a":g>=22?"#d98a4a":"#8fcf5a";
 const fmt=(s:string)=>new Date(s+"T12:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
-const MENU=[["home","Home"],["forecast","Hunting forecast"],["wind","Wind"],["lakes","Salt River lakes"],["alerts","Alerts"]];
+const MENU=[["home","Home"],["forecast","Hunting forecast"],["places","Location scores"],["wind","Wind"],["slc","Salt Lake City"],["lakes","Salt River lakes"],["alerts","Alerts"]];
 export default function Home(){
   const [d,setD]=useState<any>(null);const [err,setErr]=useState("");const [open,setOpen]=useState(0);
   const [view,setView]=useState("home");const [menu,setMenu]=useState(false);
@@ -32,6 +32,29 @@ export default function Home(){
       <p className="note">Lake Pleasant is run by the Central Arizona Project, not SRP, so it is not in SRP's report. Rising or falling water changes how much shoreline and shallow cover the ducks can use, so compare each lake's level to the last few days before you go.</p></>;
     if(err)return <p className="bad">Forecast data unavailable: {err}. Retrying every 30 minutes.</p>;
     if(!d)return <p>Loading forecast…</p>;
+        if(view==="places")return <>
+      <h2>Scores by location</h2>
+      <p className="note">Each place is scored on its own morning wind, gusts and temperature, with Flagstaff overnight conditions as the shared northern signal. Weather only: the score does not know about water or access, and it is capped at 8 because no observed migration data is connected. Tonto Basin is the Roosevelt Lake side.</p>
+      <div style={{overflowX:"auto"}}><table style={{borderCollapse:"collapse",width:"100%",minWidth:420}}>
+        <thead><tr style={{color:"#8a978f"}}><th style={{textAlign:"left",padding:"4px 6px"}}>Day</th>{d.places.map((p:any)=><th key={p.name}>{p.name}</th>)}</tr></thead>
+        <tbody>{d.days.map((x:any,i:number)=><tr key={x.date} style={{borderTop:"1px solid #28402f"}}>
+          <td style={{padding:"6px",whiteSpace:"nowrap"}}><b>{fmt(x.date)}</b></td>
+          {d.places.map((p:any)=>{const y=p.days[i];return <td key={p.name} style={{textAlign:"center",padding:"6px"}}><span style={{color:col(y.score),fontWeight:700,fontSize:"1.2rem"}}>{y.score}</span><small style={{color:"#8a978f"}}>/10</small><br/><small>{y.tempF}°F, {y.wind}</small></td>})}
+        </tr>)}</tbody></table></div></>;
+    if(view==="slc")return <>
+      <h2>Salt Lake City weather</h2>
+      {!d.slc?<p className="bad">Salt Lake City data is unavailable right now.</p>:<>
+        <p>Now: {d.slc.now.temp}°F, wind {d.slc.now.dir} {d.slc.now.wind} mph (gusts {d.slc.now.gust}), pressure {d.slc.now.pressure} hPa</p>
+        <p className="note">Shown for context only. Weather in Utah can show a front before it reaches Arizona, but it is not part of the hunting score.</p>
+        <div style={{overflowX:"auto"}}><table style={{borderCollapse:"collapse",width:"100%",minWidth:420}}>
+          <thead><tr style={{color:"#8a978f"}}><th style={{textAlign:"left",padding:"4px 6px"}}>Day</th><th>High / Low</th><th>Wind</th><th>Rain / Snow (in)</th></tr></thead>
+          <tbody>{d.slc.days.map((x:any)=><tr key={x.date} style={{borderTop:"1px solid #28402f"}}>
+            <td style={{padding:"6px",whiteSpace:"nowrap"}}><b>{fmt(x.date)}</b></td>
+            <td style={{textAlign:"center"}}>{x.hi}° / {x.lo}°</td>
+            <td style={{textAlign:"center"}}>{x.dir} {x.wind}<br/><small style={{color:gcol(x.gust)}}>gust {x.gust}</small></td>
+            <td style={{textAlign:"center"}}>{x.rain} / {x.snow}</td>
+          </tr>)}</tbody></table></div></>}</>;
+
     if(view==="forecast")return <>
       <h2>Hunting forecast</h2>
       <p className="note">Weather-based estimate for the Lake Pleasant area, using Flagstaff overnight conditions as the northern-AZ signal. No observed migration data is included, so scores are capped at 8. Radar cannot identify individual ducks.</p>
