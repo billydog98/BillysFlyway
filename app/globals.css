@@ -21,3 +21,4 @@ h2{margin:0 0 6px;font-size:1.2rem}
 .side.open{transform:none}
 .burger{display:block;position:fixed;top:12px;left:12px;z-index:30;background:#0a0f0c;color:#dfe6e1;border:1px solid #28402f;border-radius:6px;padding:8px 14px;font:inherit}
 main{padding-top:60px}.big{font-size:4rem}}
+.logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(70vw,320px)}
